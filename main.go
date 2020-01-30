@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"rbq-be/utils"
 	"regexp"
 	"strings"
 	"time"
@@ -24,8 +23,9 @@ var downloading = make(chan int, parallels)
 
 func main() {
 	urls, err := ioutil.ReadFile(urlFile)
-
-	utils.Check(err)
+	if err != nil {
+		return
+	}
 	str := string(urls)
 	arr := strings.SplitN(str, "\n", -1)
 	r, err := regexp.Compile("[^/]+$")
@@ -80,7 +80,7 @@ func downloadFileIfNotExist(filepath string, url string) (err error) {
 		return err
 	}
 	defer resp.Body.Close()
-	// Check server response
+	// check server response
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("bad status: %s", resp.Status)
 	}
